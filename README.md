@@ -1,65 +1,5 @@
 # Simple Royalties Service
 
-----------------
-
-## Context
-
-This is a test assignment
-<details>
-  <summary>Click to see the task description with my assumption notes</summary>
-
-(My assumptions are in `code blocks`)
-
-Imagine you work for a company that offers an intermediary service and you are part of the team responsible for
-calculating commissions for clients.
-
-- You will receive a request that contains a non empty list of services we provide
-  `MVP Assumption: the request is an HTTP POST containing JSON with the agreed schema in the request body. TODO: use a better thing, like Kafka or something`
-    - Each element in the list will contain
-        - an identifier, a positive integer
-        - total amount of money, that cannot be greater than 1,000,000
-          `Assumption: treat input as a Double with two decimal places precision because it is currency, regard the comma separator as a human readability aid`
-    - Each request is associated with a specific client
-      `MVP Assumption: user login and management was already handled upstream, we are receiving a unique client ID in the request`
-    - Our company will charge a percentage of the total amount of each element from the list
-    - In order to calculate the rate associated with a specific element on the list we will use the amount.
-
-For example:
-
-Given this commission
-| amount | rate |
-|---------------------|------------|
-| 0 - 1,000 | 10 % |
-| 1,000 - 3,000 | 5% |
-| 3,000 - 1,000,000 | 1% |
-
-`Assumption: upper bound is inclusive, lower bound is not`
-
-and this request:
-
-- (1) 900
-- (2) 2000
-- (3) 4000
-
-`Assumption: given that the identifier must be a positive integer, as defined by spec above, regard the surrounding brackets in the sample request as a human readability aid. Assume it's an integer in incoming JSON`
-
-the commissions will be:
-
-- (1) 90
-- (2) 100
-- (3) 40
-
-### Architecture assumptions:
-1. The API will mostly be used not by humans but by other services sending valid json in agreed format and expecting a similar response
-2. The QA or PROD build will be done automatically on a master push by some agent (Jenkins or similar) which knows how to check out Git repos and handle `sbt` commands, or, alternatively, can run just Docker
-3. Service metrics collection is not needed for this MVP
-4. We would need to handle the result in a useful way (persist it, or notify some service or a queue etc). Out of scope for this task, so just logging the client ID and total commissions amount in this MVP solution
-5. This MVP was not specifically designed to handle big load. Can use more FS2 if this is needed
-</details>
------------
-
-## Description
-
 This is a Scala 3 service that provides a simple API for royalties calculation, adjusting the commission rates depending
 on the amount spent. The commission is calculated at the following rates:
 
@@ -169,3 +109,59 @@ curl -X POST http://0.0.0.0:8080/api/commissions \
 }'
 ```
 
+------
+
+## Context
+
+This was a test assignment
+<details>
+  <summary>Click to see the task description with my assumption notes</summary>
+
+(My assumptions are in `code blocks`)
+
+Imagine you work for a company that offers an intermediary service and you are part of the team responsible for
+calculating commissions for clients.
+
+- You will receive a request that contains a non empty list of services we provide
+  `MVP Assumption: the request is an HTTP POST containing JSON with the agreed schema in the request body. TODO: use a better thing, like Kafka or something`
+    - Each element in the list will contain
+        - an identifier, a positive integer
+        - total amount of money, that cannot be greater than 1,000,000
+          `Assumption: treat input as a Double with two decimal places precision because it is currency, regard the comma separator as a human readability aid`
+    - Each request is associated with a specific client
+      `MVP Assumption: user login and management was already handled upstream, we are receiving a unique client ID in the request`
+    - Our company will charge a percentage of the total amount of each element from the list
+    - In order to calculate the rate associated with a specific element on the list we will use the amount.
+
+For example:
+
+Given this commission
+| amount | rate |
+|---------------------|------------|
+| 0 - 1,000 | 10 % |
+| 1,000 - 3,000 | 5% |
+| 3,000 - 1,000,000 | 1% |
+
+`Assumption: upper bound is inclusive, lower bound is not`
+
+and this request:
+
+- (1) 900
+- (2) 2000
+- (3) 4000
+
+`Assumption: given that the identifier must be a positive integer, as defined by spec above, regard the surrounding brackets in the sample request as a human readability aid. Assume it's an integer in incoming JSON`
+
+the commissions will be:
+
+- (1) 90
+- (2) 100
+- (3) 40
+
+### Architecture assumptions:
+1. The API will mostly be used not by humans but by other services sending valid json in agreed format and expecting a similar response
+2. The QA or PROD build will be done automatically on a master push by some agent (Jenkins or similar) which knows how to check out Git repos and handle `sbt` commands, or, alternatively, can run just Docker
+3. Service metrics collection is not needed for this MVP
+4. We would need to handle the result in a useful way (persist it, or notify some service or a queue etc). Out of scope for this task, so just logging the client ID and total commissions amount in this MVP solution
+5. This MVP was not specifically designed to handle big load. Can use more FS2 if this is needed
+</details>
